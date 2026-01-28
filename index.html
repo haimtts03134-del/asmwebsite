@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Pet House - Cửa Hàng Thú Cưng</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 60px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header p {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.9);
+            font-style: italic;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .menu-card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            transform: translateY(0);
+            animation: popIn 0.6s ease-out;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .menu-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .menu-card:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .menu-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .menu-card h2 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .menu-card p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .menu-card.meo {
+            border-top: 4px solid #FF6B9D;
+        }
+
+        .menu-card.phukien {
+            border-top: 4px solid #667eea;
+        }
+
+        .menu-card:hover.meo {
+            background: linear-gradient(135deg, #FFE5EC 0%, #FFF0F6 100%);
+        }
+
+        .menu-card:hover.phukien {
+            background: linear-gradient(135deg, #E8EEFF 0%, #F3F5FF 100%);
+        }
+
+        .footer {
+            margin-top: 60px;
+            color: white;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐾 PETHOUSE 🐾</h1>
+            <p>Những bé thú cưng thuần chủng - Chất lượng cao, giá tốt</p>
+        </div>
+
+        <div class="menu">
+            <a href="meo.html" class="menu-card meo">
+                <span class="menu-icon">🐱</span>
+                <h2>Mèo Cảnh</h2>
+                <p>Các giống mèo đẹp, thuần chủng được chọn lọc kỹ lưỡng</p>
+            </a>
+
+            <a href="phukien.html" class="menu-card phukien">
+                <span class="menu-icon">🎾</span>
+                <h2>Phụ Kiện Thú Cưng</h2>
+                <p>Đồ chơi, đồ dùng chất lượng cho mèo</p>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>© 2026 PETHOUSE - Tất cả các quyền được bảo vệ</p>
+        </div>
+    </div>
+</body>
+</html>

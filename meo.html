@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Mèo Cảnh - Pet House</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: white;
+            margin: 0;
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            text-align: center;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav a {
+            display: inline-block;
+            margin: 0 15px;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: white;
+            border-radius: 5px;
+            transition: 0.3s;
+            font-weight: 600;
+        }
+
+        .nav a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav a.active {
+            background: #FF6B9D;
+            color: white;
+        }
+
+        .banner {
+            min-height: 100vh;
+            background-image: url("binhminh.jpg");
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding-bottom: 50px;
+            padding-top: 70px;
+        }
+
+        /* Hiệu ứng kính cửa hàng */
+        .banner::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(ellipse at 70% 70%, rgba(255, 220, 180, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .content {
+            color: white;
+            text-align: center;
+            width: 80%;
+            max-width: 800px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            margin-bottom: 40px;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 30px;
+            margin-bottom: 10px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .content p {
+            font-size: 18px;
+            font-style: italic;
+            margin-bottom: 20px;
+            color: #e0e0e0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            margin: 10px;
+            border: 2px solid white;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background: white;
+            color: #333;
+        }
+
+        /* chỉnh container lên trên cùng, trải ngang */
+        .container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            width: 100%;
+            padding: 20px;
+            z-index: 1;
+            position: relative;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #ddd;
+            text-align: center;
+            text-decoration: none;
+            color: black;
+            padding: 10px;
+            transition: 0.3s;
+            width: 150px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .card img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        .card p {
+            margin: 10px 0 0;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .card-info {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-y: auto;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .card-info.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card-info div {
+            margin: 5px 0;
+        }
+
+        .card-info strong {
+            color: #ffd700;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 200;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            animation: slideUp 0.3s ease;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #FF6B9D;
+            padding-bottom: 15px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: #333;
+            font-size: 28px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #666;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            color: #FF6B9D;
+        }
+
+        .modal-body {
+            color: #333;
+        }
+
+        .modal-body div {
+            margin: 15px 0;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .modal-body strong {
+            color: #FF6B9D;
+            display: inline-block;
+            min-width: 120px;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px ghostwhite;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="index.html">🏠 Trang Chủ</a>
+        <a href="meo.html" class="active">🐱 Mèo</a>
+        <a href="phukien.html">🎾 Phụ Kiện</a>
+    </div>
+
+    <div class="banner">
+        <div class="content">
+            <h1>PETHOUSE CHỈ CUNG CẤP NHỮNG BÉ THÚ CƯNG THUẦN CHỦNG</h1>
+            <p>
+                Đảm bảo con giống có nguồn gen tốt, bố mẹ đẹp, thuần chủng,
+                chế độ chăm sóc tốt, nơi ở sạch sẽ để tạo ra những bé thú cưng đẹp nhất
+            </p>
+        </div>
+
+        <div class="container">
+            <a href="mèo Ai cập" class="card">
+                <img src="meo ai cập.jpg" alt="">
+                <p>Mèo Ai Cập</p>
+                <div class="card-info">
+                    <div><strong>Nguồn gốc:</strong> Ai Cập cổ đại</div>
+                    <div><strong>Kích cỡ:</strong> Vừa</div>
+                    <div><strong>Tuổi thọ:</strong> 9-13 năm</div>
+                    <div><strong>Tính cách:</strong> Hoạt động, thông minh, trung thành</div>
+                    <div><strong>Thức ăn:</strong> Cá, gà, thỏ</div>
+                    <div><strong>Đặc điểm:</strong> Nhanh nhẹn, cơ bắp phát triển tốt</div>
+                </div>
+            </a>
+            <a href="mèo anh lông dài" class="card">
+                <img src="mèo anh lông dài.jpg" alt="">
+                <p>Mèo Anh Lông Dài</p>
+                <div class="card-info">
+                    <div><strong>Nguồn gốc:</strong> Nước Anh</div>
+                    <div><strong>Kích cỡ:</strong> Trung bình - Lớn</div>
+                    <div><strong>Tuổi thọ:</strong> 12-17 năm</div>
+                    <div><strong>Tính cách:</strong> Hiền lành, yên tĩnh, trung thành</div>
+                    <div><strong>Thức ăn:</strong> Thịt cá, thức ăn cao cấp</div>
+                    <div><strong>Đặc điểm:</strong> Lông dài bồng bộng, mặt tròn, mắt to</div>
+                </div>
+            </a>
+            <a href="mèo anh lông ngắn trắng" class="card">
+                <img src="mèo anh lông ngắn trắng.jpg" alt="">
+                <p>Mèo Anh Lông Ngắn Trắng</p>
+                <div class="card-info">
+                    <div><strong>Nguồn gốc:</strong> Nước Anh</div>
+                    <div><strong>Kích cỡ:</strong> Trung bình</div>
+                    <div><strong>Tuổi thọ:</strong> 12-16 năm</div>
+                    <div><strong>Tính cách:</strong> Hiền lành, điềm tĩnh, thân thiện</div>
+                    <div><strong>Thức ăn:</strong> Thịt gia cầm, cá hồi</div>
+                    <div><strong>Đặc điểm:</strong> Lông trắng, mắt xanh hoặc cam</div>
+                </div>
+            </a>
+            <a href="Mèo ba tư" class="card">
+                <img src="meo ba tư.jpg" alt="">
+                <p>Mèo Ba Tư</p>
+                <div class="card-info">
+                    <div><strong>Nguồn gốc:</strong> Iran (Ba Tư)</div>
+                    <div><strong>Kích cỡ:</strong> Trung bình - Lớn</div>
+                    <div><strong>Tuổi thọ:</strong> 12-17 năm</div>
+                    <div><strong>Tính cách:</strong> Điềm tĩnh, trung thành, thích yên tĩnh</div>
+                    <div><strong>Thức ăn:</strong> Thịt, cá tươi, thức ăn cao cấp</div>
+                    <div><strong>Đặc điểm:</strong> Lông dài dày, mặt tròn, mũi ngắn</div>
+                </div>
+            </a>
+
+            <a href="mèo Bengal" class="card">
+                <img src="meo bengal.jpg" alt="">
+                <p>Mèo Bengal</p>
+                <div class="card-info">
+                    <div><strong>Nguồn gốc:</strong> Mỹ (杂交)</div>
+                    <div><strong>Kích cỡ:</strong> Trung bình - Lớn</div>
+                    <div><strong>Tuổi thọ:</strong> 10-16 năm</div>
+                    <div><strong>Tính cách:</strong> Năng động, trí tuệ cao, thích chơi nước</div>
+                    <div><strong>Thức ăn:</strong> Thịt nạc, cá</div>
+                    <div><strong>Đặc điểm:</strong> Lông đốm báo, cơ bắp phát triển, hoạt động cao</div>
+                </div>
+            </a>
+
+            <a href="mèo cam" class="card">
+                <img src="mèo cam.jpg" alt="">
+                <p>Mèo cam</p>
+                <div class="card-info">
+                    <div><strong>Nguồn gốc:</strong> Mỹ (lai tạp)</div>
+                    <div><strong>Kích cỡ:</strong> Trung bình</div>
+                    <div><strong>Tuổi thọ:</strong> 12-18 năm</div>
+                    <div><strong>Tính cách:</strong> Vui vẻ, trung thành, thân thiện với con người</div>
+                    <div><strong>Thức ăn:</strong> Cá, thịt gà, thức ăn cân bằng</div>
+                    <div><strong>Đặc điểm:</strong> Lông cam, tính cách thân thiện</div>
+                </div>
+            </a>
+
+            <a href="mèo maine coon" class="card">
+                <img src="meo maine coon.jpg" alt="">
+                <p>Mèo Maine Coon</p>
+                <div class="card-info">
+                    <div><strong>Nguồn gốc:</strong> Mỹ (Maine)</div>
+                    <div><strong>Kích cỡ:</strong> Rất lớn</div>
+                    <div><strong>Tuổi thọ:</strong> 10-13 năm</div>
+                    <div><strong>Tính cách:</strong> Thân thiện, thông minh, thích chơi nước</div>
+                    <div><strong>Thức ăn:</strong> Thịt, cá béo, thức ăn cao cấp</div>
+                    <div><strong>Đặc điểm:</strong> Mèo lớn nhất, lông dài, tai lớn có bộ lông</div>
+                </div>
+            </a>
+
+            <a href="mèo tam thể" class="card">
+                <img src="meo mèo tam thể.jpg" alt="">
+                <p>Mèo Tam Thể</p>
+                <div class="card-info">
+                    <div><strong>Nguồn gốc:</strong> Phổ biến (lai tạp)</div>
+                    <div><strong>Kích cỡ:</strong> Trung bình</div>
+                    <div><strong>Tuổi thọ:</strong> 12-18 năm</div>
+                    <div><strong>Tính cách:</strong> Vui vẻ, trung thành, hay vẫy đuôi</div>
+                    <div><strong>Thức ăn:</strong> Thịt gà, cá tươi, thức ăn cân bằng</div>
+                    <div><strong>Đặc điểm:</strong> Lông 3 màu (cam, đen, trắng), phần lớn là cái</div>
+                </div>
+            </a>
+
+            <a href="Mèo mướp" class="card">
+                <img src="meo mướp.jpg" alt="">
+                <p>Mèo Mướp</p>
+                <div class="card-info">
+                    <div><strong>Nguồn gốc:</strong> Phổ biến (lai tạp)</div>
+                    <div><strong>Kích cỡ:</strong> Trung bình</div>
+                    <div><strong>Tuổi thọ:</strong> 12-18 năm</div>
+                    <div><strong>Tính cách:</strong> Độc lập, thích yên tĩnh, ít nói</div>
+                    <div><strong>Thức ăn:</strong> Cá, tôm, gà, thức ăn cân bằng</div>
+                    <div><strong>Đặc điểm:</strong> Lông xám đen (màu mướp), lạnh lùng nhưng trung thành</div>
+                </div>
+            </a>
+
+            <a href="Mèo mỹ" class="card">
+                <img src="meo mỹ.jpg" alt="">
+                <p>Mèo mỹ</p>
+                <div class="card-info">
+                    <div><strong>Nguồn gốc:</strong> Mỹ</div>
+                    <div><strong>Kích cỡ:</strong> Trung bình</div>
+                    <div><strong>Tuổi thọ:</strong> 12-18 năm</div>
+                    <div><strong>Tính cách:</strong> Vui vẻ, nhanh nhạy, thông minh</div>
+                    <div><strong>Thức ăn:</strong> Thịt, cá, gan, thức ăn cân bằng</div>
+                    <div><strong>Đặc điểm:</strong> Mạnh mẽ, khỏe, dễ thích ứng với môi trường</div>
+                </div>
+            </a>
+
+            <a href="Mèo Ragdoll" class="card">
+                <img src="meo ragdoll.jpg" alt="">
+                <p>Mèo Ragdoll</p>
+                <div class="card-info">
+                    <div><strong>Nguồn gốc:</strong> Mỹ</div>
+                    <div><strong>Kích cỡ:</strong> Lớn</div>
+                    <div><strong>Tuổi thọ:</strong> 12-17 năm</div>
+                    <div><strong>Tính cách:</strong> Hiền lành, trung thành, thích theo sát chủ nhân</div>
+                    <div><strong>Thức ăn:</strong> Thịt gà, cá hồi, thức ăn cao cấp</div>
+                    <div><strong>Đặc điểm:</strong> Mắt xanh, lông bị dán nhuộm, dáng vóc lớn</div>
+                </div>
+            </a>
+
+            <a href="Mèo Siberian" class="card">
+                <img src="meo siberian.jpg" alt="">
+                <p>Mèo Siberian</p>
+                <div class="card-info">
+                    <div><strong>Nguồn gốc:</strong> Nga (Siberia)</div>
+                    <div><strong>Kích cỡ:</strong> Lớn</div>
+                    <div><strong>Tuổi thọ:</strong> 11-18 năm</div>
+                    <div><strong>Tính cách:</strong> Trung thành, thông minh, thích chơi nước</div>
+                    <div><strong>Thức ăn:</strong> Thịt nạc, cá, thức ăn cao cấp</div>
+                    <div><strong>Đặc điểm:</strong> Lông dài ba tầng, chịu lạnh tốt, cơ bắp mạnh</div>
+                </div>
+            </a>
+
+            <a href="Mèo Somali" class="card">
+                <img src="mèo somali.jpg" alt="">
+                <p>Mèo Somali</p>
+                <div class="card-info">
+                    <div><strong>Nguồn gốc:</strong> Mỹ (phát triển từ Abyssinian)</div>
+                    <div><strong>Kích cỡ:</strong> Vừa</div>
+                    <div><strong>Tuổi thọ:</strong> 11-16 năm</div>
+                    <div><strong>Tính cách:</strong> Năng động, thông minh, thích chơi</div>
+                    <div><strong>Thức ăn:</strong> Thịt gia cầm, cá, thức ăn cao cấp</div>
+                    <div><strong>Đặc điểm:</strong> Lông dài lắp lánh, tai lớn, mắt to</div>
+                </div>
+            </a>
+
+            <a href="mèo xiêm" class="card">
+                <img src="meo xiêm.jpg" alt="">
+                <p>mèo Xiêm</p>
+                <div class="card-info">
+                    <div><strong>Nguồn gốc:</strong> Thái Lan (Xiêm)</div>
+                    <div><strong>Kích cỡ:</strong> Trung bình nhỏ</div>
+                    <div><strong>Tuổi thọ:</strong> 12-17 năm</div>
+                    <div><strong>Tính cách:</strong> Nói nhiều, thông minh, yêu cầu sự chú ý</div>
+                    <div><strong>Thức ăn:</strong> Cá, thịt tươi, thức ăn cao cấp</div>
+                    <div><strong>Đặc điểm:</strong> Lông ngắn gập khúc, mắt xanh, tai lớn</div>
+                </div>
+            </a>
+
+            <a href="mèo Angora" class="card">
+                <img src="mèo Angora.jpg" alt="">
+                <p>mèo Angora</p>
+                <div class="card-info">
+                    <div><strong>Nguồn gốc:</strong> Thổ Nhĩ Kỳ (Ankara/Angora)</div>
+                    <div><strong>Kích cỡ:</strong> Trung bình</div>
+                    <div><strong>Tuổi thọ:</strong> 12-18 năm</div>
+                    <div><strong>Tính cách:</strong> Năng động, trung thành, thích chơi đồ chơi</div>
+                    <div><strong>Thức ăn:</strong> Cá, thịt gà, gan, thức ăn cao cấp</div>
+                    <div><strong>Đặc điểm:</strong> Lông dài mịn như tơ, tai lớn, cơ thể thanh mảnh</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Modal Hiển Thị Thông Tin Chi Tiết -->
+    <div class="modal" id="infoModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Tiêu đề</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dữ liệu cho từng con mèo
+        const petData = {
+            "mèo ai cập": {
+                title: "🐱 Mèo Ai Cập",
+                info: [
+                    { label: "Nguồn gốc", value: "Ai Cập cổ đại" },
+                    { label: "Kích cỡ", value: "Vừa" },
+                    { label: "Tuổi thọ", value: "9-13 năm" },
+                    { label: "Tính cách", value: "Hoạt động, thông minh, trung thành" },
+                    { label: "Thức ăn", value: "Cá, gà, thỏ" },
+                    { label: "Đặc điểm", value: "Nhanh nhẹn, cơ bắp phát triển tốt" }
+                ]
+            },
+            "mèo anh lông dài": {
+                title: "🐱 Mèo Anh Lông Dài",
+                info: [
+                    { label: "Nguồn gốc", value: "Nước Anh" },
+                    { label: "Kích cỡ", value: "Trung bình - Lớn" },
+                    { label: "Tuổi thọ", value: "12-17 năm" },
+                    { label: "Tính cách", value: "Hiền lành, yên tĩnh, trung thành" },
+                    { label: "Thức ăn", value: "Thịt cá, thức ăn cao cấp" },
+                    { label: "Đặc điểm", value: "Lông dài bồng bộng, mặt tròn, mắt to" }
+                ]
+            },
+            "mèo anh lông ngắn trắng": {
+                title: "🐱 Mèo Anh Lông Ngắn Trắng",
+                info: [
+                    { label: "Nguồn gốc", value: "Nước Anh" },
+                    { label: "Kích cỡ", value: "Trung bình" },
+                    { label: "Tuổi thọ", value: "12-16 năm" },
+                    { label: "Tính cách", value: "Hiền lành, điềm tĩnh, thân thiện" },
+                    { label: "Thức ăn", value: "Thịt gia cầm, cá hồi" },
+                    { label: "Đặc điểm", value: "Lông trắng, mắt xanh hoặc cam" }
+                ]
+            },
+            "mèo ba tư": {
+                title: "🐱 Mèo Ba Tư",
+                info: [
+                    { label: "Nguồn gốc", value: "Iran (Ba Tư)" },
+                    { label: "Kích cỡ", value: "Trung bình - Lớn" },
+                    { label: "Tuổi thọ", value: "12-17 năm" },
+                    { label: "Tính cách", value: "Điềm tĩnh, trung thành, thích yên tĩnh" },
+                    { label: "Thức ăn", value: "Thịt, cá tươi, thức ăn cao cấp" },
+                    { label: "Đặc điểm", value: "Lông dài dày, mặt tròn, mũi ngắn" }
+                ]
+            },
+            "mèo bengal": {
+                title: "🐱 Mèo Bengal",
+                info: [
+                    { label: "Nguồn gốc", value: "Mỹ (lai tạo)" },
+                    { label: "Kích cỡ", value: "Trung bình - Lớn" },
+                    { label: "Tuổi thọ", value: "10-16 năm" },
+                    { label: "Tính cách", value: "Năng động, trí tuệ cao, thích chơi nước" },
+                    { label: "Thức ăn", value: "Thịt nạc, cá" },
+                    { label: "Đặc điểm", value: "Lông đốm báo, cơ bắp phát triển, hoạt động cao" }
+                ]
+            },
+            "mèo cam": {
+                title: "🐱 Mèo Cam",
+                info: [
+                    { label: "Nguồn gốc", value: "Mỹ (lai tạp)" },
+                    { label: "Kích cỡ", value: "Trung bình" },
+                    { label: "Tuổi thọ", value: "12-18 năm" },
+                    { label: "Tính cách", value: "Vui vẻ, trung thành, thân thiện với con người" },
+                    { label: "Thức ăn", value: "Cá, thịt gà, thức ăn cân bằng" },
+                    { label: "Đặc điểm", value: "Lông cam, tính cách thân thiện" }
+                ]
+            },
+            "mèo maine coon": {
+                title: "🐱 Mèo Maine Coon",
+                info: [
+                    { label: "Nguồn gốc", value: "Mỹ (Maine)" },
+                    { label: "Kích cỡ", value: "Rất lớn" },
+                    { label: "Tuổi thọ", value: "10-13 năm" },
+                    { label: "Tính cách", value: "Thân thiện, thông minh, thích chơi nước" },
+                    { label: "Thức ăn", value: "Thịt, cá béo, thức ăn cao cấp" },
+                    { label: "Đặc điểm", value: "Mèo lớn nhất, lông dài, tai lớn có bộ lông" }
+                ]
+            },
+            "mèo tam thể": {
+                title: "🐱 Mèo Tam Thể",
+                info: [
+                    { label: "Nguồn gốc", value: "Phổ biến (lai tạp)" },
+                    { label: "Kích cỡ", value: "Trung bình" },
+                    { label: "Tuổi thọ", value: "12-18 năm" },
+                    { label: "Tính cách", value: "Vui vẻ, trung thành, hay vẫy đuôi" },
+                    { label: "Thức ăn", value: "Thịt gà, cá tươi, thức ăn cân bằng" },
+                    { label: "Đặc điểm", value: "Lông 3 màu (cam, đen, trắng), phần lớn là cái" }
+                ]
+            },
+            "mèo mướp": {
+                title: "🐱 Mèo Mướp",
+                info: [
+                    { label: "Nguồn gốc", value: "Phổ biến (lai tạp)" },
+                    { label: "Kích cỡ", value: "Trung bình" },
+                    { label: "Tuổi thọ", value: "12-18 năm" },
+                    { label: "Tính cách", value: "Độc lập, thích yên tĩnh, ít nói" },
+                    { label: "Thức ăn", value: "Cá, tôm, gà, thức ăn cân bằng" },
+                    { label: "Đặc điểm", value: "Lông xám đen (màu mướp), lạnh lùng nhưng trung thành" }
+                ]
+            },
+            "mèo mỹ": {
+                title: "🐱 Mèo Mỹ",
+                info: [
+                    { label: "Nguồn gốc", value: "Mỹ" },
+                    { label: "Kích cỡ", value: "Trung bình" },
+                    { label: "Tuổi thọ", value: "12-18 năm" },
+                    { label: "Tính cách", value: "Vui vẻ, nhanh nhạy, thông minh" },
+                    { label: "Thức ăn", value: "Thịt, cá, gan, thức ăn cân bằng" },
+                    { label: "Đặc điểm", value: "Mạnh mẽ, khỏe, dễ thích ứng với môi trường" }
+                ]
+            },
+            "mèo ragdoll": {
+                title: "🐱 Mèo Ragdoll",
+                info: [
+                    { label: "Nguồn gốc", value: "Mỹ" },
+                    { label: "Kích cỡ", value: "Lớn" },
+                    { label: "Tuổi thọ", value: "12-17 năm" },
+                    { label: "Tính cách", value: "Hiền lành, trung thành, thích theo sát chủ nhân" },
+                    { label: "Thức ăn", value: "Thịt gà, cá hồi, thức ăn cao cấp" },
+                    { label: "Đặc điểm", value: "Mắt xanh, lông bị dán nhuộm, dáng vóc lớn" }
+                ]
+            },
+            "mèo siberian": {
+                title: "🐱 Mèo Siberian",
+                info: [
+                    { label: "Nguồn gốc", value: "Nga (Siberia)" },
+                    { label: "Kích cỡ", value: "Lớn" },
+                    { label: "Tuổi thọ", value: "11-18 năm" },
+                    { label: "Tính cách", value: "Trung thành, thông minh, thích chơi nước" },
+                    { label: "Thức ăn", value: "Thịt nạc, cá, thức ăn cao cấp" },
+                    { label: "Đặc điểm", value: "Lông dài ba tầng, chịu lạnh tốt, cơ bắp mạnh" }
+                ]
+            },
+            "mèo somali": {
+                title: "🐱 Mèo Somali",
+                info: [
+                    { label: "Nguồn gốc", value: "Mỹ (phát triển từ Abyssinian)" },
+                    { label: "Kích cỡ", value: "Vừa" },
+                    { label: "Tuổi thọ", value: "11-16 năm" },
+                    { label: "Tính cách", value: "Năng động, thông minh, thích chơi" },
+                    { label: "Thức ăn", value: "Thịt gia cầm, cá, thức ăn cao cấp" },
+                    { label: "Đặc điểm", value: "Lông dài lắp lánh, tai lớn, mắt to" }
+                ]
+            },
+            "mèo xiêm": {
+                title: "🐱 Mèo Xiêm",
+                info: [
+                    { label: "Nguồn gốc", value: "Thái Lan (Xiêm)" },
+                    { label: "Kích cỡ", value: "Trung bình nhỏ" },
+                    { label: "Tuổi thọ", value: "12-17 năm" },
+                    { label: "Tính cách", value: "Nói nhiều, thông minh, yêu cầu sự chú ý" },
+                    { label: "Thức ăn", value: "Cá, thịt tươi, thức ăn cao cấp" },
+                    { label: "Đặc điểm", value: "Lông ngắn gập khúc, mắt xanh, tai lớn" }
+                ]
+            },
+            "mèo angora": {
+                title: "🐱 Mèo Angora",
+                info: [
+                    { label: "Nguồn gốc", value: "Thổ Nhĩ Kỳ (Ankara/Angora)" },
+                    { label: "Kích cỡ", value: "Trung bình" },
+                    { label: "Tuổi thọ", value: "12-18 năm" },
+                    { label: "Tính cách", value: "Năng động, trung thành, thích chơi đồ chơi" },
+                    { label: "Thức ăn", value: "Cá, thịt gà, gan, thức ăn cao cấp" },
+                    { label: "Đặc điểm", value: "Lông dài mịn như tơ, tai lớn, cơ thể thanh mảnh" }
+                ]
+            }
+        };
+
+        function openModal(petName) {
+            const data = petData[petName.toLowerCase()];
+            if (!data) return;
+
+            const modal = document.getElementById('infoModal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+
+            title.textContent = data.title;
+            body.innerHTML = data.info.map(item => 
+                `<div><strong>${item.label}:</strong> ${item.value}</div>`
+            ).join('');
+
+            modal.classList.add('show');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('infoModal');
+            modal.classList.remove('show');
+        }
+
+        // Đóng modal khi click bên ngoài
+        document.getElementById('infoModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Cập nhật sự kiện click cho các card
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                e.preventDefault();
+                const petName = this.getAttribute('href');
+                openModal(petName);
+            });
+        });
+    </script>
+</body>
+</html>
